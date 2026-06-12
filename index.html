@@ -15,13 +15,13 @@
       --bg: #f5f5f4; --surface: #fff; --border: #e7e5e4; --tick: #f0efee;
       --text: #1c1917; --muted: #78716c; --faint: #a8a29e; --legend: #57534e;
       --btn-bg: #1c1917; --btn-hover: #292524; --btn-text: #fff;
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --sheet-bg: #fff; --row-border: #f0efee;
     }
     html[data-theme="dark"] {
       --bg: #0c0a09; --surface: #1c1917; --border: #292524; --tick: #292524;
       --text: #fafaf9; --muted: #a8a29e; --faint: #78716c; --legend: #d6d3d1;
       --btn-bg: #fafaf9; --btn-hover: #e7e5e4; --btn-text: #1c1917;
+      --sheet-bg: #1c1917; --row-border: #292524;
     }
 
     html { -webkit-text-size-adjust: 100%; }
@@ -29,7 +29,7 @@
       font-family: 'Inter', sans-serif;
       background: var(--bg); color: var(--text);
       min-height: 100dvh;
-      padding: calc(16px + var(--safe-top)) 16px calc(24px + var(--safe-bottom));
+      padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
       transition: background .2s, color .2s;
       -webkit-tap-highlight-color: transparent;
     }
@@ -40,48 +40,37 @@
     h1 { font-size: 22px; font-weight: 600; line-height: 1.2; }
     .subtitle { font-size: 13px; color: var(--muted); margin-top: 3px; }
 
-    /* Toggle */
-    .toggle-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; padding-top: 3px; }
-    .toggle-label { font-size: 12px; color: var(--muted); user-select: none; }
-    .toggle { position: relative; width: 44px; height: 26px; }
-    .toggle input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; inset: 0; background: #d6d3d1; border-radius: 26px; cursor: pointer; transition: background .2s; }
-    .slider::before { content:''; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
-    .toggle input:checked + .slider { background: #44403c; }
-    .toggle input:checked + .slider::before { transform: translateX(18px); }
+    /* Settings icon button */
+    .settings-btn {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--surface); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0; margin-top: 2px;
+      transition: background .15s;
+    }
+    .settings-btn:active { background: var(--border); }
+    .settings-btn svg { width: 18px; height: 18px; stroke: var(--muted); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
     /* Legend */
     .legend { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
     .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--legend); }
     .dot { width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0; }
 
-    /* Timetable scroll wrapper */
+    /* Timetable */
+    .scroll-hint { font-size: 11px; color: var(--faint); margin-bottom: 10px; display: none; }
+    @media (max-width: 600px) { .scroll-hint { display: block; } }
     .tt-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -16px; padding: 0 16px 6px; }
     .tt-inner { min-width: 560px; }
     .tt-header { display: flex; margin-bottom: 3px; padding-left: 48px; }
     .hour-label { flex: 1; font-size: 9px; color: var(--faint); padding-left: 3px; border-left: 1px solid var(--border); }
-
     .day-row { display: flex; align-items: stretch; margin-bottom: 5px; gap: 6px; }
-    .day-name {
-      width: 42px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 500; color: var(--muted);
-      background: var(--surface); border-radius: 10px; height: 64px; border: 1px solid var(--border);
-    }
-    .day-blocks {
-      flex: 1; position: relative; height: 64px;
-      background: var(--surface); border-radius: 10px; border: 1px solid var(--border); overflow: hidden;
-    }
+    .day-name { width: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--muted); background: var(--surface); border-radius: 10px; height: 64px; border: 1px solid var(--border); }
+    .day-blocks { flex: 1; position: relative; height: 64px; background: var(--surface); border-radius: 10px; border: 1px solid var(--border); overflow: hidden; }
     .hour-tick { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--tick); }
-    .block {
-      position: absolute; top: 5px; bottom: 5px; border-radius: 7px; padding: 5px 8px;
-      overflow: hidden; display: flex; flex-direction: column; justify-content: center;
-    }
+    .block { position: absolute; top: 5px; bottom: 5px; border-radius: 7px; padding: 5px 8px; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
     .block .code { font-size: 9px; opacity: .7; white-space: nowrap; }
     .block .name { font-size: 11px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .block .time { font-size: 9px; margin-top: 2px; opacity: .75; white-space: nowrap; }
-
-    /* Colours */
     .purple { background: #ede9fe; color: #4c1d95; }
     .teal   { background: #ccfbf1; color: #134e4a; }
     .amber  { background: #fef3c7; color: #78350f; }
@@ -93,31 +82,16 @@
     html[data-theme="dark"] .blue   { background: #172554; color: #bfdbfe; }
     html[data-theme="dark"] .coral  { background: #450a0a; color: #fecaca; }
 
-    /* Scroll hint */
-    .scroll-hint { font-size: 11px; color: var(--faint); margin-bottom: 16px; display: none; }
-    @media (max-width: 600px) { .scroll-hint { display: block; } }
-
     /* Export */
     .export-wrap { margin: 22px 0 0; }
-    .export-btn {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; padding: 14px 20px;
-      background: var(--btn-bg); color: var(--btn-text);
-      border: none; border-radius: 12px;
-      font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none;
-      transition: opacity .15s;
-      min-height: 50px;
-    }
+    .export-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px 20px; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: 12px; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; transition: opacity .15s; min-height: 50px; }
     .export-btn:active { opacity: .75; }
     .hint { font-size: 12px; color: var(--faint); margin-top: 8px; text-align: center; line-height: 1.5; }
 
     /* Exams */
     h2 { font-size: 16px; font-weight: 600; margin: 28px 0 12px; }
     .exam-grid { display: flex; flex-direction: column; gap: 8px; }
-    .exam-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-      padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px;
-    }
+    .exam-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; }
     .exam-left { flex: 1; }
     .exam-code { font-size: 10px; color: var(--faint); margin-bottom: 2px; }
     .exam-name { font-size: 13px; font-weight: 500; margin-bottom: 6px; line-height: 1.3; }
@@ -129,6 +103,55 @@
     html[data-theme="dark"] .badge-final { background: #450a0a; color: #fecaca; }
     .exam-right { text-align: right; flex-shrink: 0; }
     .exam-date { font-size: 12px; color: var(--muted); line-height: 1.6; white-space: nowrap; }
+
+    /* ── Settings sheet ── */
+    .backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,.4);
+      opacity: 0; pointer-events: none;
+      transition: opacity .25s; z-index: 100;
+    }
+    .backdrop.open { opacity: 1; pointer-events: all; }
+
+    .sheet {
+      position: fixed; left: 0; right: 0; bottom: 0;
+      background: var(--sheet-bg);
+      border-radius: 20px 20px 0 0;
+      padding: 0 0 calc(16px + env(safe-area-inset-bottom, 0px));
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.32,1,.6,1);
+      z-index: 101; max-width: 600px; margin: 0 auto;
+    }
+    .sheet.open { transform: translateY(0); }
+
+    .sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 4px; margin: 12px auto 4px; }
+    .sheet-title { font-size: 13px; font-weight: 600; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; padding: 12px 20px 8px; }
+
+    .sheet-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-top: 1px solid var(--row-border);
+      min-height: 54px;
+    }
+    .row-label { font-size: 15px; font-weight: 500; color: var(--text); }
+    .row-sub   { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* iOS-style toggle */
+    .ios-toggle { position: relative; width: 50px; height: 30px; flex-shrink: 0; }
+    .ios-toggle input { opacity: 0; width: 0; height: 0; }
+    .ios-slider { position: absolute; inset: 0; background: #d1d5db; border-radius: 30px; cursor: pointer; transition: background .2s; }
+    .ios-slider::before { content:''; position: absolute; width: 24px; height: 24px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform .2s; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+    .ios-toggle input:checked + .ios-slider { background: #34c759; }
+    .ios-toggle input:checked + .ios-slider::before { transform: translateX(20px); }
+
+    /* Update button in sheet */
+    .update-btn {
+      display: flex; align-items: center; gap: 10px;
+      background: none; border: none; cursor: pointer;
+      color: #3b82f6; font-size: 15px; font-weight: 500; padding: 0;
+    }
+    .update-btn svg { width: 18px; height: 18px; stroke: #3b82f6; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+    .update-btn.spinning svg { animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .update-status { font-size: 12px; color: var(--muted); margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -138,13 +161,9 @@
       <h1>Course Schedule</h1>
       <p class="subtitle">KKU · Semester 1/2569</p>
     </div>
-    <div class="toggle-wrap">
-      <span class="toggle-label" id="theme-label">Light</span>
-      <label class="toggle" aria-label="Toggle dark mode">
-        <input type="checkbox" id="theme-toggle" />
-        <span class="slider"></span>
-      </label>
-    </div>
+    <button class="settings-btn" id="settings-btn" aria-label="Settings">
+      <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+    </button>
   </div>
 
   <div class="legend" id="legend"></div>
@@ -158,62 +177,50 @@
   </div>
 
   <div class="export-wrap">
-    <a id="export-link" class="export-btn" download="semester1-2569.ics">
-      📅 Export to iOS Calendar
-    </a>
+    <a id="export-link" class="export-btn" download="semester1-2569.ics">📅 Export to iOS Calendar</a>
     <p class="hint">AirDrop or iCloud Drive → open on iPhone → Calendar imports all events</p>
   </div>
 
   <h2>Exam Schedule</h2>
   <div class="exam-grid">
-    <div class="exam-card">
-      <div class="exam-left">
-        <div class="exam-code">BS924001</div>
-        <div class="exam-name">Financial Research</div>
-        <div class="exam-badges"><span class="badge badge-final">Final</span></div>
-      </div>
-      <div class="exam-right"><div class="exam-date">19 Oct 2026<br>08:30 – 11:30</div></div>
+    <div class="exam-card"><div class="exam-left"><div class="exam-code">BS924001</div><div class="exam-name">Financial Research</div><div class="exam-badges"><span class="badge badge-final">Final</span></div></div><div class="exam-right"><div class="exam-date">19 Oct 2026<br>08:30 – 11:30</div></div></div>
+    <div class="exam-card"><div class="exam-left"><div class="exam-code">BS923006</div><div class="exam-name">Financial Econometrics</div><div class="exam-badges"><span class="badge badge-final">Final</span></div></div><div class="exam-right"><div class="exam-date">21 Oct 2026<br>08:30 – 11:30</div></div></div>
+    <div class="exam-card"><div class="exam-left"><div class="exam-code">SC401006</div><div class="exam-name">General Mathematics</div><div class="exam-badges"><span class="badge badge-mid">Midterm</span><span class="badge badge-final">Final</span></div></div><div class="exam-right"><div class="exam-date">24 Aug 2026<br>08:30 – 11:30</div><div class="exam-date" style="margin-top:4px">20 Oct 2026<br>13:00 – 16:00</div></div></div>
+    <div class="exam-card"><div class="exam-left"><div class="exam-code">BS924101</div><div class="exam-name">Strategic Financial Planning</div><div class="exam-badges"><span class="badge badge-final">Final</span></div></div><div class="exam-right"><div class="exam-date">20 Oct 2026<br>08:30 – 11:30</div></div></div>
+    <div class="exam-card"><div class="exam-left"><div class="exam-code">BS923303</div><div class="exam-name">Insurance Planning</div><div class="exam-badges"><span class="badge badge-final">Final</span></div></div><div class="exam-right"><div class="exam-date">27 Oct 2026<br>08:30 – 11:30</div></div></div>
+  </div>
+</div>
+
+<!-- Settings sheet -->
+<div class="backdrop" id="backdrop"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Settings">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Settings</div>
+
+  <div class="sheet-row">
+    <div>
+      <div class="row-label">Dark mode</div>
     </div>
-    <div class="exam-card">
-      <div class="exam-left">
-        <div class="exam-code">BS923006</div>
-        <div class="exam-name">Financial Econometrics</div>
-        <div class="exam-badges"><span class="badge badge-final">Final</span></div>
-      </div>
-      <div class="exam-right"><div class="exam-date">21 Oct 2026<br>08:30 – 11:30</div></div>
+    <label class="ios-toggle" aria-label="Toggle dark mode">
+      <input type="checkbox" id="theme-toggle" />
+      <span class="ios-slider"></span>
+    </label>
+  </div>
+
+  <div class="sheet-row">
+    <div>
+      <div class="row-label">Update app</div>
+      <div class="update-status" id="update-status">Tap to check for latest version</div>
     </div>
-    <div class="exam-card">
-      <div class="exam-left">
-        <div class="exam-code">SC401006</div>
-        <div class="exam-name">General Mathematics</div>
-        <div class="exam-badges"><span class="badge badge-mid">Midterm</span><span class="badge badge-final">Final</span></div>
-      </div>
-      <div class="exam-right">
-        <div class="exam-date">24 Aug 2026<br>08:30 – 11:30</div>
-        <div class="exam-date" style="margin-top:4px">20 Oct 2026<br>13:00 – 16:00</div>
-      </div>
-    </div>
-    <div class="exam-card">
-      <div class="exam-left">
-        <div class="exam-code">BS924101</div>
-        <div class="exam-name">Strategic Financial Planning</div>
-        <div class="exam-badges"><span class="badge badge-final">Final</span></div>
-      </div>
-      <div class="exam-right"><div class="exam-date">20 Oct 2026<br>08:30 – 11:30</div></div>
-    </div>
-    <div class="exam-card">
-      <div class="exam-left">
-        <div class="exam-code">BS923303</div>
-        <div class="exam-name">Insurance Planning</div>
-        <div class="exam-badges"><span class="badge badge-final">Final</span></div>
-      </div>
-      <div class="exam-right"><div class="exam-date">27 Oct 2026<br>08:30 – 11:30</div></div>
-    </div>
+    <button class="update-btn" id="update-btn" aria-label="Update app">
+      <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c-1.66 0-3-4.03-3-9s1.34-9 3-9m0 18c1.66 0 3-4.03 3-9s-1.34-9-3-9M3 12a9 9 0 0 1 9-9"/></svg>
+      Refresh
+    </button>
   </div>
 </div>
 
 <script>
-const START=8, END=18, TOTAL=END-START;
+const START=8,END=18,TOTAL=END-START;
 const pct=h=>((h-START)/TOTAL*100).toFixed(3)+'%';
 const pw=(s,e)=>((e-s)/TOTAL*100).toFixed(3)+'%';
 
@@ -227,21 +234,23 @@ const courses=[
 ];
 const dayList=['Mon','Tue','Wed','Thu','Fri'];
 const colorMap={purple:'#ede9fe',teal:'#ccfbf1',amber:'#fef3c7',blue:'#dbeafe',coral:'#fee2e2'};
-const colorMapDark={purple:'#3b0764',teal:'#042f2e',amber:'#451a03',blue:'#172554',coral:'#450a0a'};
+const colorDark={purple:'#3b0764',teal:'#042f2e',amber:'#451a03',blue:'#172554',coral:'#450a0a'};
 
-const legendEl=document.getElementById('legend');
+// Legend
 const seen=new Set();
+const legendEl=document.getElementById('legend');
 courses.forEach(c=>{
   if(seen.has(c.code)) return; seen.add(c.code);
   const d=document.createElement('div'); d.className='legend-item';
-  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
-  d.innerHTML=`<span class="dot legend-dot-${c.color}" style="background:${colorMap[c.color]}"></span><span>${c.code} — ${c.name}</span>`;
+  d.innerHTML=`<span class="dot c-dot-${c.color}" style="background:${colorMap[c.color]}"></span><span>${c.code} — ${c.name}</span>`;
   legendEl.appendChild(d);
 });
 
+// Hour header
 const hdr=document.getElementById('tt-header');
 for(let h=START;h<END;h++){const s=document.createElement('div');s.className='hour-label';s.textContent=h+':00';hdr.appendChild(s);}
 
+// Timetable rows
 const tt=document.getElementById('timetable');
 dayList.forEach(day=>{
   const row=document.createElement('div'); row.className='day-row';
@@ -258,7 +267,7 @@ dayList.forEach(day=>{
   row.appendChild(blocks); tt.appendChild(row);
 });
 
-// ICS
+// ICS export
 function pad(n){return String(n).padStart(2,'0');}
 function dt(y,mo,d,h,mi){return ''+y+pad(mo)+pad(d)+'T'+pad(h)+pad(mi)+'00';}
 const UNTIL='20261028T000000Z';
@@ -288,20 +297,53 @@ document.getElementById('export-link').href='data:text/calendar;charset=utf-8,'+
 
 // Theme
 const toggle=document.getElementById('theme-toggle');
-const label=document.getElementById('theme-label');
 const saved=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
 function applyTheme(t){
   document.documentElement.setAttribute('data-theme',t);
-  toggle.checked=t==='dark'; label.textContent=t==='dark'?'Dark':'Light';
+  toggle.checked=t==='dark';
   localStorage.setItem('theme',t);
-  document.querySelectorAll('.legend-dot-purple').forEach(el=>el.style.background=t==='dark'?colorMapDark.purple:colorMap.purple);
-  document.querySelectorAll('.legend-dot-teal').forEach(el=>el.style.background=t==='dark'?colorMapDark.teal:colorMap.teal);
-  document.querySelectorAll('.legend-dot-amber').forEach(el=>el.style.background=t==='dark'?colorMapDark.amber:colorMap.amber);
-  document.querySelectorAll('.legend-dot-blue').forEach(el=>el.style.background=t==='dark'?colorMapDark.blue:colorMap.blue);
-  document.querySelectorAll('.legend-dot-coral').forEach(el=>el.style.background=t==='dark'?colorMapDark.coral:colorMap.coral);
+  const map=t==='dark'?colorDark:colorMap;
+  Object.keys(map).forEach(k=>{
+    document.querySelectorAll('.c-dot-'+k).forEach(el=>el.style.background=map[k]);
+  });
 }
 applyTheme(saved);
 toggle.addEventListener('change',()=>applyTheme(toggle.checked?'dark':'light'));
+
+// Settings sheet
+const settingsBtn=document.getElementById('settings-btn');
+const backdrop=document.getElementById('backdrop');
+const sheet=document.getElementById('sheet');
+function openSheet(){ sheet.classList.add('open'); backdrop.classList.add('open'); document.body.style.overflow='hidden'; }
+function closeSheet(){ sheet.classList.remove('open'); backdrop.classList.remove('open'); document.body.style.overflow=''; }
+settingsBtn.addEventListener('click', openSheet);
+backdrop.addEventListener('click', closeSheet);
+
+// Swipe down to close
+let touchStartY=0;
+sheet.addEventListener('touchstart',e=>{ touchStartY=e.touches[0].clientY; },{passive:true});
+sheet.addEventListener('touchend',e=>{
+  if(e.changedTouches[0].clientY - touchStartY > 60) closeSheet();
+},{passive:true});
+
+// Update button
+const updateBtn=document.getElementById('update-btn');
+const updateStatus=document.getElementById('update-status');
+updateBtn.addEventListener('click',async()=>{
+  updateBtn.classList.add('spinning');
+  updateStatus.textContent='Checking for updates…';
+  try {
+    if('caches' in window){
+      const keys=await caches.keys();
+      await Promise.all(keys.map(k=>caches.delete(k)));
+    }
+    updateStatus.textContent='Done — reloading…';
+    setTimeout(()=>location.reload(true), 600);
+  } catch(e){
+    updateStatus.textContent='Reloading…';
+    setTimeout(()=>location.reload(true), 400);
+  }
+});
 </script>
 </body>
 </html>
