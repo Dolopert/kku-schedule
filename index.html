@@ -8,65 +8,108 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #f5f5f4; color: #1c1917; min-height: 100vh; padding: 24px 16px; }
+
+    :root {
+      --bg: #f5f5f4; --surface: #fff; --border: #e7e5e4; --tick: #f0efee;
+      --text: #1c1917; --muted: #78716c; --faint: #a8a29e; --legend: #57534e;
+      --btn-bg: #1c1917; --btn-hover: #292524; --btn-text: #fff;
+    }
+    html[data-theme="dark"] {
+      --bg: #0c0a09; --surface: #1c1917; --border: #292524; --tick: #292524;
+      --text: #fafaf9; --muted: #a8a29e; --faint: #78716c; --legend: #d6d3d1;
+      --btn-bg: #fafaf9; --btn-hover: #e7e5e4; --btn-text: #1c1917;
+    }
+
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px 16px; transition: background .2s, color .2s; }
     .container { max-width: 900px; margin: 0 auto; }
-    h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
-    .subtitle { font-size: 13px; color: #78716c; margin-bottom: 24px; }
+
+    /* Header row */
+    .top-bar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; }
+    h1 { font-size: 20px; font-weight: 600; }
+    .subtitle { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+    /* Dark mode toggle */
+    .toggle-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; padding-top: 2px; }
+    .toggle-label { font-size: 11px; color: var(--muted); user-select: none; }
+    .toggle { position: relative; width: 40px; height: 22px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; inset: 0; background: #d6d3d1; border-radius: 22px; cursor: pointer; transition: background .2s; }
+    .slider::before { content:''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform .2s; }
+    .toggle input:checked + .slider { background: #44403c; }
+    .toggle input:checked + .slider::before { transform: translateX(18px); }
 
     /* Timetable */
     .tt-header { display: flex; margin-bottom: 2px; padding-left: 46px; }
-    .hour-label { flex: 1; font-size: 10px; color: #a8a29e; padding-left: 3px; border-left: 1px solid #e7e5e4; }
+    .hour-label { flex: 1; font-size: 10px; color: var(--faint); padding-left: 3px; border-left: 1px solid var(--border); }
     .day-row { display: flex; align-items: stretch; margin-bottom: 4px; gap: 6px; }
     .day-name { width: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 500; color: #78716c; background: #fff;
-      border-radius: 8px; height: 60px; border: 1px solid #e7e5e4; }
-    .day-blocks { flex: 1; position: relative; height: 60px; background: #fff;
-      border-radius: 8px; border: 1px solid #e7e5e4; overflow: hidden; }
-    .hour-tick { position: absolute; top: 0; bottom: 0; border-left: 1px solid #f0efee; }
+      font-size: 11px; font-weight: 500; color: var(--muted); background: var(--surface);
+      border-radius: 8px; height: 60px; border: 1px solid var(--border); }
+    .day-blocks { flex: 1; position: relative; height: 60px; background: var(--surface);
+      border-radius: 8px; border: 1px solid var(--border); overflow: hidden; }
+    .hour-tick { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--tick); }
     .block { position: absolute; top: 5px; bottom: 5px; border-radius: 6px; padding: 4px 8px;
       overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
     .block .code  { font-size: 9px; opacity: .7; white-space: nowrap; }
     .block .name  { font-size: 11px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .block .time  { font-size: 9px; margin-top: 1px; opacity: .75; white-space: nowrap; }
+
+    /* Course colours — light & dark */
     .purple { background: #ede9fe; color: #4c1d95; }
     .teal   { background: #ccfbf1; color: #134e4a; }
     .amber  { background: #fef3c7; color: #78350f; }
     .blue   { background: #dbeafe; color: #1e3a8a; }
     .coral  { background: #fee2e2; color: #7f1d1d; }
+    html[data-theme="dark"] .purple { background: #3b0764; color: #e9d5ff; }
+    html[data-theme="dark"] .teal   { background: #042f2e; color: #99f6e4; }
+    html[data-theme="dark"] .amber  { background: #451a03; color: #fde68a; }
+    html[data-theme="dark"] .blue   { background: #172554; color: #bfdbfe; }
+    html[data-theme="dark"] .coral  { background: #450a0a; color: #fecaca; }
 
     /* Export button */
     .export-wrap { margin: 20px 0; }
     .export-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
-      background: #1c1917; color: #fff; border: none; border-radius: 8px;
-      font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; }
-    .export-btn:hover { background: #292524; }
-    .hint { font-size: 11px; color: #a8a29e; margin-top: 6px; }
+      background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; transition: background .15s; }
+    .export-btn:hover { background: var(--btn-hover); }
+    .hint { font-size: 11px; color: var(--faint); margin-top: 6px; }
 
     /* Exams */
     h2 { font-size: 15px; font-weight: 600; margin: 28px 0 12px; }
     .exam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
-    .exam-card { background: #fff; border: 1px solid #e7e5e4; border-radius: 10px; padding: 12px 14px; }
-    .exam-code { font-size: 10px; color: #a8a29e; margin-bottom: 2px; }
+    .exam-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+    .exam-code { font-size: 10px; color: var(--faint); margin-bottom: 2px; }
     .exam-name { font-size: 12px; font-weight: 500; margin-bottom: 6px; }
     .badge { display: inline-block; font-size: 9px; padding: 2px 7px; border-radius: 4px; margin-bottom: 3px; }
     .badge-mid   { background: #fef3c7; color: #92400e; }
     .badge-final { background: #fee2e2; color: #991b1b; }
-    .exam-date { font-size: 11px; color: #78716c; }
+    html[data-theme="dark"] .badge-mid   { background: #451a03; color: #fde68a; }
+    html[data-theme="dark"] .badge-final { background: #450a0a; color: #fecaca; }
+    .exam-date { font-size: 11px; color: var(--muted); }
 
-    /* Courses legend */
+    /* Legend */
     .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #57534e; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--legend); }
     .dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
 
-    @media (max-width: 600px) {
-      .block .name { font-size: 9px; }
-    }
+    @media (max-width: 600px) { .block .name { font-size: 9px; } }
   </style>
 </head>
 <body>
 <div class="container">
-  <h1>Course Schedule</h1>
-  <p class="subtitle">KKU · Semester 1/2569 (June – October 2026)</p>
+  <div class="top-bar">
+    <div>
+      <h1>Course Schedule</h1>
+      <p class="subtitle">KKU · Semester 1/2569 (June – October 2026)</p>
+    </div>
+    <div class="toggle-wrap">
+      <span class="toggle-label" id="theme-label">Light</span>
+      <label class="toggle" aria-label="Toggle dark mode">
+        <input type="checkbox" id="theme-toggle" />
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
 
   <div class="legend" id="legend"></div>
   <div class="tt-header" id="tt-header"></div>
@@ -171,6 +214,20 @@ events.forEach((ev,i)=>{
 });
 ics+='END:VCALENDAR';
 document.getElementById('export-link').href='data:text/calendar;charset=utf-8,'+encodeURIComponent(ics);
+
+// Dark mode toggle
+const toggle = document.getElementById('theme-toggle');
+const label  = document.getElementById('theme-label');
+const saved  = localStorage.getItem('theme') ||
+               (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  toggle.checked = t === 'dark';
+  label.textContent = t === 'dark' ? 'Dark' : 'Light';
+  localStorage.setItem('theme', t);
+}
+applyTheme(saved);
+toggle.addEventListener('change', () => applyTheme(toggle.checked ? 'dark' : 'light'));
 </script>
 </body>
 </html>
