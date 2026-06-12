@@ -2,8 +2,10 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KKU Schedule — Semester 1/2569</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>KKU Schedule</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
   <style>
@@ -13,6 +15,8 @@
       --bg: #f5f5f4; --surface: #fff; --border: #e7e5e4; --tick: #f0efee;
       --text: #1c1917; --muted: #78716c; --faint: #a8a29e; --legend: #57534e;
       --btn-bg: #1c1917; --btn-hover: #292524; --btn-text: #fff;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
     html[data-theme="dark"] {
       --bg: #0c0a09; --surface: #1c1917; --border: #292524; --tick: #292524;
@@ -20,41 +24,64 @@
       --btn-bg: #fafaf9; --btn-hover: #e7e5e4; --btn-text: #1c1917;
     }
 
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px 16px; transition: background .2s, color .2s; }
-    .container { max-width: 900px; margin: 0 auto; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100dvh;
+      padding: calc(16px + var(--safe-top)) 16px calc(24px + var(--safe-bottom));
+      transition: background .2s, color .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .container { max-width: 600px; margin: 0 auto; }
 
-    /* Header row */
-    .top-bar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; }
-    h1 { font-size: 20px; font-weight: 600; }
-    .subtitle { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    /* Top bar */
+    .top-bar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+    h1 { font-size: 22px; font-weight: 600; line-height: 1.2; }
+    .subtitle { font-size: 13px; color: var(--muted); margin-top: 3px; }
 
-    /* Dark mode toggle */
-    .toggle-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; padding-top: 2px; }
-    .toggle-label { font-size: 11px; color: var(--muted); user-select: none; }
-    .toggle { position: relative; width: 40px; height: 22px; }
+    /* Toggle */
+    .toggle-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; padding-top: 3px; }
+    .toggle-label { font-size: 12px; color: var(--muted); user-select: none; }
+    .toggle { position: relative; width: 44px; height: 26px; }
     .toggle input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; inset: 0; background: #d6d3d1; border-radius: 22px; cursor: pointer; transition: background .2s; }
-    .slider::before { content:''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform .2s; }
+    .slider { position: absolute; inset: 0; background: #d6d3d1; border-radius: 26px; cursor: pointer; transition: background .2s; }
+    .slider::before { content:''; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
     .toggle input:checked + .slider { background: #44403c; }
     .toggle input:checked + .slider::before { transform: translateX(18px); }
 
-    /* Timetable */
-    .tt-header { display: flex; margin-bottom: 2px; padding-left: 46px; }
-    .hour-label { flex: 1; font-size: 10px; color: var(--faint); padding-left: 3px; border-left: 1px solid var(--border); }
-    .day-row { display: flex; align-items: stretch; margin-bottom: 4px; gap: 6px; }
-    .day-name { width: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 500; color: var(--muted); background: var(--surface);
-      border-radius: 8px; height: 60px; border: 1px solid var(--border); }
-    .day-blocks { flex: 1; position: relative; height: 60px; background: var(--surface);
-      border-radius: 8px; border: 1px solid var(--border); overflow: hidden; }
-    .hour-tick { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--tick); }
-    .block { position: absolute; top: 5px; bottom: 5px; border-radius: 6px; padding: 4px 8px;
-      overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
-    .block .code  { font-size: 9px; opacity: .7; white-space: nowrap; }
-    .block .name  { font-size: 11px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .block .time  { font-size: 9px; margin-top: 1px; opacity: .75; white-space: nowrap; }
+    /* Legend */
+    .legend { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--legend); }
+    .dot { width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0; }
 
-    /* Course colours — light & dark */
+    /* Timetable scroll wrapper */
+    .tt-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -16px; padding: 0 16px 6px; }
+    .tt-inner { min-width: 560px; }
+    .tt-header { display: flex; margin-bottom: 3px; padding-left: 48px; }
+    .hour-label { flex: 1; font-size: 9px; color: var(--faint); padding-left: 3px; border-left: 1px solid var(--border); }
+
+    .day-row { display: flex; align-items: stretch; margin-bottom: 5px; gap: 6px; }
+    .day-name {
+      width: 42px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 500; color: var(--muted);
+      background: var(--surface); border-radius: 10px; height: 64px; border: 1px solid var(--border);
+    }
+    .day-blocks {
+      flex: 1; position: relative; height: 64px;
+      background: var(--surface); border-radius: 10px; border: 1px solid var(--border); overflow: hidden;
+    }
+    .hour-tick { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--tick); }
+    .block {
+      position: absolute; top: 5px; bottom: 5px; border-radius: 7px; padding: 5px 8px;
+      overflow: hidden; display: flex; flex-direction: column; justify-content: center;
+    }
+    .block .code { font-size: 9px; opacity: .7; white-space: nowrap; }
+    .block .name { font-size: 11px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .block .time { font-size: 9px; margin-top: 2px; opacity: .75; white-space: nowrap; }
+
+    /* Colours */
     .purple { background: #ede9fe; color: #4c1d95; }
     .teal   { background: #ccfbf1; color: #134e4a; }
     .amber  { background: #fef3c7; color: #78350f; }
@@ -66,33 +93,42 @@
     html[data-theme="dark"] .blue   { background: #172554; color: #bfdbfe; }
     html[data-theme="dark"] .coral  { background: #450a0a; color: #fecaca; }
 
-    /* Export button */
-    .export-wrap { margin: 20px 0; }
-    .export-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
-      background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: 8px;
-      font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; transition: background .15s; }
-    .export-btn:hover { background: var(--btn-hover); }
-    .hint { font-size: 11px; color: var(--faint); margin-top: 6px; }
+    /* Scroll hint */
+    .scroll-hint { font-size: 11px; color: var(--faint); margin-bottom: 16px; display: none; }
+    @media (max-width: 600px) { .scroll-hint { display: block; } }
+
+    /* Export */
+    .export-wrap { margin: 22px 0 0; }
+    .export-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 14px 20px;
+      background: var(--btn-bg); color: var(--btn-text);
+      border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none;
+      transition: opacity .15s;
+      min-height: 50px;
+    }
+    .export-btn:active { opacity: .75; }
+    .hint { font-size: 12px; color: var(--faint); margin-top: 8px; text-align: center; line-height: 1.5; }
 
     /* Exams */
-    h2 { font-size: 15px; font-weight: 600; margin: 28px 0 12px; }
-    .exam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
-    .exam-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+    h2 { font-size: 16px; font-weight: 600; margin: 28px 0 12px; }
+    .exam-grid { display: flex; flex-direction: column; gap: 8px; }
+    .exam-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px;
+    }
+    .exam-left { flex: 1; }
     .exam-code { font-size: 10px; color: var(--faint); margin-bottom: 2px; }
-    .exam-name { font-size: 12px; font-weight: 500; margin-bottom: 6px; }
-    .badge { display: inline-block; font-size: 9px; padding: 2px 7px; border-radius: 4px; margin-bottom: 3px; }
+    .exam-name { font-size: 13px; font-weight: 500; margin-bottom: 6px; line-height: 1.3; }
+    .exam-badges { display: flex; flex-wrap: wrap; gap: 4px; }
+    .badge { display: inline-block; font-size: 10px; padding: 3px 8px; border-radius: 5px; }
     .badge-mid   { background: #fef3c7; color: #92400e; }
     .badge-final { background: #fee2e2; color: #991b1b; }
     html[data-theme="dark"] .badge-mid   { background: #451a03; color: #fde68a; }
     html[data-theme="dark"] .badge-final { background: #450a0a; color: #fecaca; }
-    .exam-date { font-size: 11px; color: var(--muted); }
-
-    /* Legend */
-    .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--legend); }
-    .dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
-
-    @media (max-width: 600px) { .block .name { font-size: 9px; } }
+    .exam-right { text-align: right; flex-shrink: 0; }
+    .exam-date { font-size: 12px; color: var(--muted); line-height: 1.6; white-space: nowrap; }
   </style>
 </head>
 <body>
@@ -100,7 +136,7 @@
   <div class="top-bar">
     <div>
       <h1>Course Schedule</h1>
-      <p class="subtitle">KKU · Semester 1/2569 (June – October 2026)</p>
+      <p class="subtitle">KKU · Semester 1/2569</p>
     </div>
     <div class="toggle-wrap">
       <span class="toggle-label" id="theme-label">Light</span>
@@ -112,23 +148,67 @@
   </div>
 
   <div class="legend" id="legend"></div>
-  <div class="tt-header" id="tt-header"></div>
-  <div id="timetable"></div>
+  <p class="scroll-hint">← Swipe timetable to scroll →</p>
+
+  <div class="tt-scroll">
+    <div class="tt-inner">
+      <div class="tt-header" id="tt-header"></div>
+      <div id="timetable"></div>
+    </div>
+  </div>
 
   <div class="export-wrap">
     <a id="export-link" class="export-btn" download="semester1-2569.ics">
-      &#x1F4C5; Export to iOS Calendar (.ics)
+      📅 Export to iOS Calendar
     </a>
-    <p class="hint">Transfer to iPhone via AirDrop or iCloud Drive, then open to import into Calendar.</p>
+    <p class="hint">AirDrop or iCloud Drive → open on iPhone → Calendar imports all events</p>
   </div>
 
   <h2>Exam Schedule</h2>
   <div class="exam-grid">
-    <div class="exam-card"><div class="exam-code">BS924001</div><div class="exam-name">Financial Research</div><span class="badge badge-final">Final</span><div class="exam-date">19 Oct 2026 · 08:30–11:30</div></div>
-    <div class="exam-card"><div class="exam-code">BS923006</div><div class="exam-name">Financial Econometrics</div><span class="badge badge-final">Final</span><div class="exam-date">21 Oct 2026 · 08:30–11:30</div></div>
-    <div class="exam-card"><div class="exam-code">SC401006</div><div class="exam-name">General Mathematics</div><span class="badge badge-mid">Midterm</span><div class="exam-date">24 Aug 2026 · 08:30–11:30</div><br><span class="badge badge-final" style="margin-top:4px">Final</span><div class="exam-date">20 Oct 2026 · 13:00–16:00</div></div>
-    <div class="exam-card"><div class="exam-code">BS924101</div><div class="exam-name">Strategic Financial Planning</div><span class="badge badge-final">Final</span><div class="exam-date">20 Oct 2026 · 08:30–11:30</div></div>
-    <div class="exam-card"><div class="exam-code">BS923303</div><div class="exam-name">Insurance Planning</div><span class="badge badge-final">Final</span><div class="exam-date">27 Oct 2026 · 08:30–11:30</div></div>
+    <div class="exam-card">
+      <div class="exam-left">
+        <div class="exam-code">BS924001</div>
+        <div class="exam-name">Financial Research</div>
+        <div class="exam-badges"><span class="badge badge-final">Final</span></div>
+      </div>
+      <div class="exam-right"><div class="exam-date">19 Oct 2026<br>08:30 – 11:30</div></div>
+    </div>
+    <div class="exam-card">
+      <div class="exam-left">
+        <div class="exam-code">BS923006</div>
+        <div class="exam-name">Financial Econometrics</div>
+        <div class="exam-badges"><span class="badge badge-final">Final</span></div>
+      </div>
+      <div class="exam-right"><div class="exam-date">21 Oct 2026<br>08:30 – 11:30</div></div>
+    </div>
+    <div class="exam-card">
+      <div class="exam-left">
+        <div class="exam-code">SC401006</div>
+        <div class="exam-name">General Mathematics</div>
+        <div class="exam-badges"><span class="badge badge-mid">Midterm</span><span class="badge badge-final">Final</span></div>
+      </div>
+      <div class="exam-right">
+        <div class="exam-date">24 Aug 2026<br>08:30 – 11:30</div>
+        <div class="exam-date" style="margin-top:4px">20 Oct 2026<br>13:00 – 16:00</div>
+      </div>
+    </div>
+    <div class="exam-card">
+      <div class="exam-left">
+        <div class="exam-code">BS924101</div>
+        <div class="exam-name">Strategic Financial Planning</div>
+        <div class="exam-badges"><span class="badge badge-final">Final</span></div>
+      </div>
+      <div class="exam-right"><div class="exam-date">20 Oct 2026<br>08:30 – 11:30</div></div>
+    </div>
+    <div class="exam-card">
+      <div class="exam-left">
+        <div class="exam-code">BS923303</div>
+        <div class="exam-name">Insurance Planning</div>
+        <div class="exam-badges"><span class="badge badge-final">Final</span></div>
+      </div>
+      <div class="exam-right"><div class="exam-date">27 Oct 2026<br>08:30 – 11:30</div></div>
+    </div>
   </div>
 </div>
 
@@ -137,43 +217,37 @@ const START=8, END=18, TOTAL=END-START;
 const pct=h=>((h-START)/TOTAL*100).toFixed(3)+'%';
 const pw=(s,e)=>((e-s)/TOTAL*100).toFixed(3)+'%';
 
-const courses = [
-  { code:'BS923006', name:'Financial Econometrics',       room:'',        color:'purple', day:'Mon', start:9,  end:12   },
-  { code:'SC401006', name:'General Mathematics',          room:'SC8512',  color:'teal',   day:'Mon', start:13, end:14.5 },
-  { code:'BS924101', name:'Strategic Financial Planning', room:'BS 2404', color:'amber',  day:'Tue', start:9,  end:12   },
-  { code:'SC401006', name:'General Mathematics',          room:'SC8512',  color:'teal',   day:'Wed', start:13, end:14.5 },
-  { code:'BS924001', name:'Financial Research',           room:'BS 1403', color:'blue',   day:'Thu', start:9,  end:11   },
-  { code:'BS923303', name:'Insurance Planning',           room:'BS 1308', color:'coral',  day:'Fri', start:9,  end:12   },
+const courses=[
+  {code:'BS923006',name:'Financial Econometrics',      room:'',       color:'purple',day:'Mon',start:9, end:12  },
+  {code:'SC401006',name:'General Mathematics',         room:'SC8512', color:'teal',  day:'Mon',start:13,end:14.5},
+  {code:'BS924101',name:'Strategic Financial Planning',room:'BS 2404',color:'amber', day:'Tue',start:9, end:12  },
+  {code:'SC401006',name:'General Mathematics',         room:'SC8512', color:'teal',  day:'Wed',start:13,end:14.5},
+  {code:'BS924001',name:'Financial Research',          room:'BS 1403',color:'blue',  day:'Thu',start:9, end:11  },
+  {code:'BS923303',name:'Insurance Planning',          room:'BS 1308',color:'coral', day:'Fri',start:9, end:12  },
 ];
+const dayList=['Mon','Tue','Wed','Thu','Fri'];
+const colorMap={purple:'#ede9fe',teal:'#ccfbf1',amber:'#fef3c7',blue:'#dbeafe',coral:'#fee2e2'};
+const colorMapDark={purple:'#3b0764',teal:'#042f2e',amber:'#451a03',blue:'#172554',coral:'#450a0a'};
 
-const dayList = ['Mon','Tue','Wed','Thu','Fri'];
-
-// Legend (unique courses)
-const seen = new Set();
-const colorMap = { purple:'#ede9fe', teal:'#ccfbf1', amber:'#fef3c7', blue:'#dbeafe', coral:'#fee2e2' };
-const legendEl = document.getElementById('legend');
-courses.forEach(c => {
+const legendEl=document.getElementById('legend');
+const seen=new Set();
+courses.forEach(c=>{
   if(seen.has(c.code)) return; seen.add(c.code);
-  const d = document.createElement('div'); d.className='legend-item';
-  d.innerHTML=`<span class="dot" style="background:${colorMap[c.color]}"></span>${c.code} ${c.name}`;
+  const d=document.createElement('div'); d.className='legend-item';
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  d.innerHTML=`<span class="dot legend-dot-${c.color}" style="background:${colorMap[c.color]}"></span><span>${c.code} — ${c.name}</span>`;
   legendEl.appendChild(d);
 });
 
-// Hour header
-const hdr = document.getElementById('tt-header');
-for(let h=START; h<END; h++){
-  const s=document.createElement('div'); s.className='hour-label'; s.textContent=h+':00'; hdr.appendChild(s);
-}
+const hdr=document.getElementById('tt-header');
+for(let h=START;h<END;h++){const s=document.createElement('div');s.className='hour-label';s.textContent=h+':00';hdr.appendChild(s);}
 
-// Rows
-const tt = document.getElementById('timetable');
-dayList.forEach(day => {
+const tt=document.getElementById('timetable');
+dayList.forEach(day=>{
   const row=document.createElement('div'); row.className='day-row';
   const lbl=document.createElement('div'); lbl.className='day-name'; lbl.textContent=day; row.appendChild(lbl);
   const blocks=document.createElement('div'); blocks.className='day-blocks';
-  for(let h=START;h<=END;h++){
-    const t=document.createElement('div'); t.className='hour-tick'; t.style.left=pct(h); blocks.appendChild(t);
-  }
+  for(let h=START;h<=END;h++){const t=document.createElement('div');t.className='hour-tick';t.style.left=pct(h);blocks.appendChild(t);}
   courses.filter(c=>c.day===day).forEach(c=>{
     const b=document.createElement('div'); b.className='block '+c.color;
     b.style.left=pct(c.start); b.style.width=pw(c.start,c.end);
@@ -184,50 +258,50 @@ dayList.forEach(day => {
   row.appendChild(blocks); tt.appendChild(row);
 });
 
-// ICS export
+// ICS
 function pad(n){return String(n).padStart(2,'0');}
 function dt(y,mo,d,h,mi){return ''+y+pad(mo)+pad(d)+'T'+pad(h)+pad(mi)+'00';}
 const UNTIL='20261028T000000Z';
 const events=[
-  {s:'Financial Econometrics (BS923006)',      loc:'',       st:dt(2026,6,15,9,0),  en:dt(2026,6,15,12,0), rr:'FREQ=WEEKLY;BYDAY=MO;UNTIL='+UNTIL},
-  {s:'General Mathematics (SC401006)',         loc:'SC8512', st:dt(2026,6,15,13,0), en:dt(2026,6,15,14,30),rr:'FREQ=WEEKLY;BYDAY=MO,WE;UNTIL='+UNTIL},
-  {s:'Strategic Financial Planning (BS924101)',loc:'BS 2404',st:dt(2026,6,16,9,0),  en:dt(2026,6,16,12,0), rr:'FREQ=WEEKLY;BYDAY=TU;UNTIL='+UNTIL},
-  {s:'Financial Research (BS924001)',          loc:'BS 1403',st:dt(2026,6,18,9,0),  en:dt(2026,6,18,11,0), rr:'FREQ=WEEKLY;BYDAY=TH;UNTIL='+UNTIL},
-  {s:'Insurance Planning (BS923303)',          loc:'BS 1308',st:dt(2026,6,19,9,0),  en:dt(2026,6,19,12,0), rr:'FREQ=WEEKLY;BYDAY=FR;UNTIL='+UNTIL},
-  {s:'Financial Research Final Exam',          loc:'', st:dt(2026,10,19,8,30), en:dt(2026,10,19,11,30), rr:null},
-  {s:'Financial Econometrics Final Exam',      loc:'', st:dt(2026,10,21,8,30), en:dt(2026,10,21,11,30), rr:null},
-  {s:'General Mathematics Midterm',            loc:'', st:dt(2026,8,24,8,30),  en:dt(2026,8,24,11,30),  rr:null},
-  {s:'General Mathematics Final Exam',         loc:'', st:dt(2026,10,20,13,0), en:dt(2026,10,20,16,0),  rr:null},
-  {s:'Strategic Financial Planning Final Exam',loc:'', st:dt(2026,10,20,8,30), en:dt(2026,10,20,11,30), rr:null},
-  {s:'Insurance Planning Final Exam',          loc:'', st:dt(2026,10,27,8,30), en:dt(2026,10,27,11,30), rr:null},
+  {s:'Financial Econometrics (BS923006)',      loc:'',       st:dt(2026,6,15,9,0), en:dt(2026,6,15,12,0), rr:'FREQ=WEEKLY;BYDAY=MO;UNTIL='+UNTIL},
+  {s:'General Mathematics (SC401006)',         loc:'SC8512', st:dt(2026,6,15,13,0),en:dt(2026,6,15,14,30),rr:'FREQ=WEEKLY;BYDAY=MO,WE;UNTIL='+UNTIL},
+  {s:'Strategic Financial Planning (BS924101)',loc:'BS 2404',st:dt(2026,6,16,9,0), en:dt(2026,6,16,12,0), rr:'FREQ=WEEKLY;BYDAY=TU;UNTIL='+UNTIL},
+  {s:'Financial Research (BS924001)',          loc:'BS 1403',st:dt(2026,6,18,9,0), en:dt(2026,6,18,11,0), rr:'FREQ=WEEKLY;BYDAY=TH;UNTIL='+UNTIL},
+  {s:'Insurance Planning (BS923303)',          loc:'BS 1308',st:dt(2026,6,19,9,0), en:dt(2026,6,19,12,0), rr:'FREQ=WEEKLY;BYDAY=FR;UNTIL='+UNTIL},
+  {s:'Financial Research Final Exam',          loc:'',st:dt(2026,10,19,8,30),en:dt(2026,10,19,11,30),rr:null},
+  {s:'Financial Econometrics Final Exam',      loc:'',st:dt(2026,10,21,8,30),en:dt(2026,10,21,11,30),rr:null},
+  {s:'General Mathematics Midterm',            loc:'',st:dt(2026,8,24,8,30), en:dt(2026,8,24,11,30), rr:null},
+  {s:'General Mathematics Final Exam',         loc:'',st:dt(2026,10,20,13,0),en:dt(2026,10,20,16,0), rr:null},
+  {s:'Strategic Financial Planning Final Exam',loc:'',st:dt(2026,10,20,8,30),en:dt(2026,10,20,11,30),rr:null},
+  {s:'Insurance Planning Final Exam',          loc:'',st:dt(2026,10,27,8,30),en:dt(2026,10,27,11,30),rr:null},
 ];
 let ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//KKU//Schedule-S1-2569//EN\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n';
 events.forEach((ev,i)=>{
-  ics+='BEGIN:VEVENT\r\n';
-  ics+='UID:kku-s1-2569-'+i+'@schedule\r\n';
-  ics+='SUMMARY:'+ev.s+'\r\n';
+  ics+='BEGIN:VEVENT\r\nUID:kku-s1-2569-'+i+'@schedule\r\nSUMMARY:'+ev.s+'\r\n';
   if(ev.loc) ics+='LOCATION:'+ev.loc+'\r\n';
-  ics+='DTSTART;TZID=Asia/Bangkok:'+ev.st+'\r\n';
-  ics+='DTEND;TZID=Asia/Bangkok:'+ev.en+'\r\n';
+  ics+='DTSTART;TZID=Asia/Bangkok:'+ev.st+'\r\nDTEND;TZID=Asia/Bangkok:'+ev.en+'\r\n';
   if(ev.rr) ics+='RRULE:'+ev.rr+'\r\n';
   ics+='END:VEVENT\r\n';
 });
 ics+='END:VCALENDAR';
 document.getElementById('export-link').href='data:text/calendar;charset=utf-8,'+encodeURIComponent(ics);
 
-// Dark mode toggle
-const toggle = document.getElementById('theme-toggle');
-const label  = document.getElementById('theme-label');
-const saved  = localStorage.getItem('theme') ||
-               (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-function applyTheme(t) {
-  document.documentElement.setAttribute('data-theme', t);
-  toggle.checked = t === 'dark';
-  label.textContent = t === 'dark' ? 'Dark' : 'Light';
-  localStorage.setItem('theme', t);
+// Theme
+const toggle=document.getElementById('theme-toggle');
+const label=document.getElementById('theme-label');
+const saved=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  toggle.checked=t==='dark'; label.textContent=t==='dark'?'Dark':'Light';
+  localStorage.setItem('theme',t);
+  document.querySelectorAll('.legend-dot-purple').forEach(el=>el.style.background=t==='dark'?colorMapDark.purple:colorMap.purple);
+  document.querySelectorAll('.legend-dot-teal').forEach(el=>el.style.background=t==='dark'?colorMapDark.teal:colorMap.teal);
+  document.querySelectorAll('.legend-dot-amber').forEach(el=>el.style.background=t==='dark'?colorMapDark.amber:colorMap.amber);
+  document.querySelectorAll('.legend-dot-blue').forEach(el=>el.style.background=t==='dark'?colorMapDark.blue:colorMap.blue);
+  document.querySelectorAll('.legend-dot-coral').forEach(el=>el.style.background=t==='dark'?colorMapDark.coral:colorMap.coral);
 }
 applyTheme(saved);
-toggle.addEventListener('change', () => applyTheme(toggle.checked ? 'dark' : 'light'));
+toggle.addEventListener('change',()=>applyTheme(toggle.checked?'dark':'light'));
 </script>
 </body>
 </html>
