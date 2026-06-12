@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KKU Schedule — Semester 1/2569</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #f5f5f4; color: #1c1917; min-height: 100vh; padding: 24px 16px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+    .subtitle { font-size: 13px; color: #78716c; margin-bottom: 24px; }
+
+    /* Timetable */
+    .tt-header { display: flex; margin-bottom: 2px; padding-left: 46px; }
+    .hour-label { flex: 1; font-size: 10px; color: #a8a29e; padding-left: 3px; border-left: 1px solid #e7e5e4; }
+    .day-row { display: flex; align-items: stretch; margin-bottom: 4px; gap: 6px; }
+    .day-name { width: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 500; color: #78716c; background: #fff;
+      border-radius: 8px; height: 60px; border: 1px solid #e7e5e4; }
+    .day-blocks { flex: 1; position: relative; height: 60px; background: #fff;
+      border-radius: 8px; border: 1px solid #e7e5e4; overflow: hidden; }
+    .hour-tick { position: absolute; top: 0; bottom: 0; border-left: 1px solid #f0efee; }
+    .block { position: absolute; top: 5px; bottom: 5px; border-radius: 6px; padding: 4px 8px;
+      overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+    .block .code  { font-size: 9px; opacity: .7; white-space: nowrap; }
+    .block .name  { font-size: 11px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .block .time  { font-size: 9px; margin-top: 1px; opacity: .75; white-space: nowrap; }
+    .purple { background: #ede9fe; color: #4c1d95; }
+    .teal   { background: #ccfbf1; color: #134e4a; }
+    .amber  { background: #fef3c7; color: #78350f; }
+    .blue   { background: #dbeafe; color: #1e3a8a; }
+    .coral  { background: #fee2e2; color: #7f1d1d; }
+
+    /* Export button */
+    .export-wrap { margin: 20px 0; }
+    .export-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
+      background: #1c1917; color: #fff; border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; }
+    .export-btn:hover { background: #292524; }
+    .hint { font-size: 11px; color: #a8a29e; margin-top: 6px; }
+
+    /* Exams */
+    h2 { font-size: 15px; font-weight: 600; margin: 28px 0 12px; }
+    .exam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+    .exam-card { background: #fff; border: 1px solid #e7e5e4; border-radius: 10px; padding: 12px 14px; }
+    .exam-code { font-size: 10px; color: #a8a29e; margin-bottom: 2px; }
+    .exam-name { font-size: 12px; font-weight: 500; margin-bottom: 6px; }
+    .badge { display: inline-block; font-size: 9px; padding: 2px 7px; border-radius: 4px; margin-bottom: 3px; }
+    .badge-mid   { background: #fef3c7; color: #92400e; }
+    .badge-final { background: #fee2e2; color: #991b1b; }
+    .exam-date { font-size: 11px; color: #78716c; }
+
+    /* Courses legend */
+    .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #57534e; }
+    .dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+    @media (max-width: 600px) {
+      .block .name { font-size: 9px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Course Schedule</h1>
+  <p class="subtitle">KKU · Semester 1/2569 (June – October 2026)</p>
+
+  <div class="legend" id="legend"></div>
+  <div class="tt-header" id="tt-header"></div>
+  <div id="timetable"></div>
+
+  <div class="export-wrap">
+    <a id="export-link" class="export-btn" download="semester1-2569.ics">
+      &#x1F4C5; Export to iOS Calendar (.ics)
+    </a>
+    <p class="hint">Transfer to iPhone via AirDrop or iCloud Drive, then open to import into Calendar.</p>
+  </div>
+
+  <h2>Exam Schedule</h2>
+  <div class="exam-grid">
+    <div class="exam-card"><div class="exam-code">BS924001</div><div class="exam-name">Financial Research</div><span class="badge badge-final">Final</span><div class="exam-date">19 Oct 2026 · 08:30–11:30</div></div>
+    <div class="exam-card"><div class="exam-code">BS923006</div><div class="exam-name">Financial Econometrics</div><span class="badge badge-final">Final</span><div class="exam-date">21 Oct 2026 · 08:30–11:30</div></div>
+    <div class="exam-card"><div class="exam-code">SC401006</div><div class="exam-name">General Mathematics</div><span class="badge badge-mid">Midterm</span><div class="exam-date">24 Aug 2026 · 08:30–11:30</div><br><span class="badge badge-final" style="margin-top:4px">Final</span><div class="exam-date">20 Oct 2026 · 13:00–16:00</div></div>
+    <div class="exam-card"><div class="exam-code">BS924101</div><div class="exam-name">Strategic Financial Planning</div><span class="badge badge-final">Final</span><div class="exam-date">20 Oct 2026 · 08:30–11:30</div></div>
+    <div class="exam-card"><div class="exam-code">BS923303</div><div class="exam-name">Insurance Planning</div><span class="badge badge-final">Final</span><div class="exam-date">27 Oct 2026 · 08:30–11:30</div></div>
+  </div>
+</div>
+
+<script>
+const START=8, END=18, TOTAL=END-START;
+const pct=h=>((h-START)/TOTAL*100).toFixed(3)+'%';
+const pw=(s,e)=>((e-s)/TOTAL*100).toFixed(3)+'%';
+
+const courses = [
+  { code:'BS923006', name:'Financial Econometrics',       room:'',        color:'purple', day:'Mon', start:9,  end:12   },
+  { code:'SC401006', name:'General Mathematics',          room:'SC8512',  color:'teal',   day:'Mon', start:13, end:14.5 },
+  { code:'BS924101', name:'Strategic Financial Planning', room:'BS 2404', color:'amber',  day:'Tue', start:9,  end:12   },
+  { code:'SC401006', name:'General Mathematics',          room:'SC8512',  color:'teal',   day:'Wed', start:13, end:14.5 },
+  { code:'BS924001', name:'Financial Research',           room:'BS 1403', color:'blue',   day:'Thu', start:9,  end:11   },
+  { code:'BS923303', name:'Insurance Planning',           room:'BS 1308', color:'coral',  day:'Fri', start:9,  end:12   },
+];
+
+const dayList = ['Mon','Tue','Wed','Thu','Fri'];
+
+// Legend (unique courses)
+const seen = new Set();
+const colorMap = { purple:'#ede9fe', teal:'#ccfbf1', amber:'#fef3c7', blue:'#dbeafe', coral:'#fee2e2' };
+const legendEl = document.getElementById('legend');
+courses.forEach(c => {
+  if(seen.has(c.code)) return; seen.add(c.code);
+  const d = document.createElement('div'); d.className='legend-item';
+  d.innerHTML=`<span class="dot" style="background:${colorMap[c.color]}"></span>${c.code} ${c.name}`;
+  legendEl.appendChild(d);
+});
+
+// Hour header
+const hdr = document.getElementById('tt-header');
+for(let h=START; h<END; h++){
+  const s=document.createElement('div'); s.className='hour-label'; s.textContent=h+':00'; hdr.appendChild(s);
+}
+
+// Rows
+const tt = document.getElementById('timetable');
+dayList.forEach(day => {
+  const row=document.createElement('div'); row.className='day-row';
+  const lbl=document.createElement('div'); lbl.className='day-name'; lbl.textContent=day; row.appendChild(lbl);
+  const blocks=document.createElement('div'); blocks.className='day-blocks';
+  for(let h=START;h<=END;h++){
+    const t=document.createElement('div'); t.className='hour-tick'; t.style.left=pct(h); blocks.appendChild(t);
+  }
+  courses.filter(c=>c.day===day).forEach(c=>{
+    const b=document.createElement('div'); b.className='block '+c.color;
+    b.style.left=pct(c.start); b.style.width=pw(c.start,c.end);
+    const fmt=h=>{const hr=Math.floor(h),mn=Math.round((h-hr)*60);return hr+':'+(mn===0?'00':mn);};
+    b.innerHTML=`<span class="code">${c.code}</span><span class="name">${c.name}</span><span class="time">${fmt(c.start)}–${fmt(c.end)}${c.room?' · '+c.room:''}</span>`;
+    blocks.appendChild(b);
+  });
+  row.appendChild(blocks); tt.appendChild(row);
+});
+
+// ICS export
+function pad(n){return String(n).padStart(2,'0');}
+function dt(y,mo,d,h,mi){return ''+y+pad(mo)+pad(d)+'T'+pad(h)+pad(mi)+'00';}
+const UNTIL='20261028T000000Z';
+const events=[
+  {s:'Financial Econometrics (BS923006)',      loc:'',       st:dt(2026,6,15,9,0),  en:dt(2026,6,15,12,0), rr:'FREQ=WEEKLY;BYDAY=MO;UNTIL='+UNTIL},
+  {s:'General Mathematics (SC401006)',         loc:'SC8512', st:dt(2026,6,15,13,0), en:dt(2026,6,15,14,30),rr:'FREQ=WEEKLY;BYDAY=MO,WE;UNTIL='+UNTIL},
+  {s:'Strategic Financial Planning (BS924101)',loc:'BS 2404',st:dt(2026,6,16,9,0),  en:dt(2026,6,16,12,0), rr:'FREQ=WEEKLY;BYDAY=TU;UNTIL='+UNTIL},
+  {s:'Financial Research (BS924001)',          loc:'BS 1403',st:dt(2026,6,18,9,0),  en:dt(2026,6,18,11,0), rr:'FREQ=WEEKLY;BYDAY=TH;UNTIL='+UNTIL},
+  {s:'Insurance Planning (BS923303)',          loc:'BS 1308',st:dt(2026,6,19,9,0),  en:dt(2026,6,19,12,0), rr:'FREQ=WEEKLY;BYDAY=FR;UNTIL='+UNTIL},
+  {s:'Financial Research Final Exam',          loc:'', st:dt(2026,10,19,8,30), en:dt(2026,10,19,11,30), rr:null},
+  {s:'Financial Econometrics Final Exam',      loc:'', st:dt(2026,10,21,8,30), en:dt(2026,10,21,11,30), rr:null},
+  {s:'General Mathematics Midterm',            loc:'', st:dt(2026,8,24,8,30),  en:dt(2026,8,24,11,30),  rr:null},
+  {s:'General Mathematics Final Exam',         loc:'', st:dt(2026,10,20,13,0), en:dt(2026,10,20,16,0),  rr:null},
+  {s:'Strategic Financial Planning Final Exam',loc:'', st:dt(2026,10,20,8,30), en:dt(2026,10,20,11,30), rr:null},
+  {s:'Insurance Planning Final Exam',          loc:'', st:dt(2026,10,27,8,30), en:dt(2026,10,27,11,30), rr:null},
+];
+let ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//KKU//Schedule-S1-2569//EN\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n';
+events.forEach((ev,i)=>{
+  ics+='BEGIN:VEVENT\r\n';
+  ics+='UID:kku-s1-2569-'+i+'@schedule\r\n';
+  ics+='SUMMARY:'+ev.s+'\r\n';
+  if(ev.loc) ics+='LOCATION:'+ev.loc+'\r\n';
+  ics+='DTSTART;TZID=Asia/Bangkok:'+ev.st+'\r\n';
+  ics+='DTEND;TZID=Asia/Bangkok:'+ev.en+'\r\n';
+  if(ev.rr) ics+='RRULE:'+ev.rr+'\r\n';
+  ics+='END:VEVENT\r\n';
+});
+ics+='END:VCALENDAR';
+document.getElementById('export-link').href='data:text/calendar;charset=utf-8,'+encodeURIComponent(ics);
+</script>
+</body>
+</html>
